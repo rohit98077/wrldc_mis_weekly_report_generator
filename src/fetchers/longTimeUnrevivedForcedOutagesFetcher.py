@@ -29,7 +29,7 @@ def fetchlongTimeUnrevivedForcedOutages(conStr: str, startDt: dt.datetime, endDt
     where (oe.shutdown_typename = 'FORCED') and 
     (oe.OUTAGE_DATETIME < :1) and
     ((oe.REVIVED_DATETIME IS NULL) or (oe.REVIVED_DATETIME>:1)) and
-    (months_between(oe.OUTAGE_DATETIME,:1) > 6)
+    ((:1 - oe.OUTAGE_DATETIME) > INTERVAL '180' DAY(3))
     '''
 
     # get cursor and execute fetch sql
