@@ -15,8 +15,8 @@ class TestFetchGenUnitOutages(unittest.TestCase):
     def test_run(self) -> None:
         """tests the function that fetches the ouatges from reporting software
         """
-        startDate = dt.datetime(2019, 10, 10)
-        endDate = dt.datetime(2019, 10, 25)
+        startDate = dt.datetime(2020, 8, 2)
+        endDate = dt.datetime(2020, 8, 8)
 
         outages: List[Outage] = fetchMajorGenUnitOutages(
             self.appDbConStr, startDate, endDate)
