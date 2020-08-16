@@ -1,12 +1,12 @@
 import unittest
 import datetime as dt
 from src.config.appConfig import getConfig
-from src.fetchers.genUnitOutagesFetcher import fetchMajorGenUnitOutages
+from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.typeDefs.outage import IOutage
 from typing import List
 
 
-class TestFetchGenUnitOutages(unittest.TestCase):
+class TestFetchTransElOutages(unittest.TestCase):
     appDbConStr: str = ''
 
     def setUp(self):
@@ -19,7 +19,7 @@ class TestFetchGenUnitOutages(unittest.TestCase):
         startDate = dt.datetime(2020, 8, 2)
         endDate = dt.datetime(2020, 8, 8)
 
-        outages: List[IOutage] = fetchMajorGenUnitOutages(
+        outages: List[IOutage] = fetchTransElOutages(
             self.appDbConStr, startDate, endDate)
         # print(outages)
         self.assertTrue(len(outages) > 0)

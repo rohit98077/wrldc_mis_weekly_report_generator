@@ -1,11 +1,11 @@
 import datetime as dt
 import cx_Oracle
-from typing import List, TypedDict
+from typing import List
 from src.typeDefs.outage import IOutage
 
 
-def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -> List[IOutage]:
-    """fetch major generating unit outages for a start and end dates, where
+def fetchTransElOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -> List[IOutage]:
+    """fetch transmission element outages for a start and end dates, where
     start time between outage time and revive time
     outage time between start and end time
     outage time < end time but not revived (revived time = null)
@@ -28,7 +28,7 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
     oe.OUTAGE_DATETIME, oe.REVIVED_DATETIME,
     oe.OUTAGE_REMARKS, oe.REASON, oe.shutdown_tag
     from mis_warehouse.outage_events oe 
-    where (oe.entity_name = 'GENERATING_UNIT') and 
+    where not(oe.entity_name = 'GENERATING_UNIT') and 
     (
         (oe.OUTAGE_DATETIME between :1 and :2) 
         or ((oe.OUTAGE_DATETIME < :2) and (oe.REVIVED_DATETIME = NULL))
@@ -53,7 +53,7 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
     # initialise outages to be returned
     outages: List[IOutage] = []
 
-    unitNameInd = colNames.index('ELEMENT_NAME')
+    elNameInd = colNames.index('ELEMENT_NAME')
     ownersInd = colNames.index('OWNERS')
     capInd = colNames.index('CAPACITY')
     outDtInd = colNames.index('OUTAGE_DATETIME')
@@ -64,9 +64,9 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
 
     # iterate through each row to populate result outage rows
     for row in dbRows:
-        unitName: str = row[unitNameInd]
+        elName: str = row[elNameInd]
         owners: str = row[ownersInd]
-        cap: str = str(row[capInd])
+        voltLvl: str = str(row[capInd])
         outDateStr: str = dt.datetime.strftime(row[outDtInd], "%d-%m-%Y")
         outTimeStr: str = dt.datetime.strftime(row[outDtInd], "%H:%M")
         revivalDateStr: str = 'Still out'
@@ -84,9 +84,9 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
                                             remarks] if not(r == None)])
         # create outage record
         outageObj: IOutage = {
-            'elName': unitName,
+            'elName': elName,
             'owners': owners,
-            'capacity': cap,
+            'capacity': voltLvl,
             'outageDate': outDateStr,
             'outageTime': outTimeStr,
             'revivalDate': revivalDateStr,
