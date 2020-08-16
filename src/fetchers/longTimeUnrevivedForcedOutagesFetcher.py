@@ -4,11 +4,8 @@ from typing import List
 from src.typeDefs.outage import IOutage
 
 
-def fetchTransElOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -> List[IOutage]:
-    """fetch transmission element outages for a start and end dates, where
-    start time between outage time and revive time
-    outage time between start and end time
-    outage time < end time but not revived (revived time = null)
+def fetchlongTimeUnrevivedForcedOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -> List[IOutage]:
+    """fetch forced outages that are still out and outage duration greater than 6 months
 
     Args:
         conStr (str): connection string to reports database
@@ -28,17 +25,15 @@ def fetchTransElOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -
     oe.OUTAGE_DATETIME, oe.REVIVED_DATETIME,
     oe.OUTAGE_REMARKS, oe.REASON, oe.shutdown_tag
     from mis_warehouse.outage_events oe 
-    where not(oe.entity_name = 'GENERATING_UNIT') and 
-    (
-        (oe.OUTAGE_DATETIME between :1 and :2) 
-        or ((oe.OUTAGE_DATETIME < :2) and (oe.REVIVED_DATETIME IS NULL))
-        or (:1 between oe.OUTAGE_DATETIME and oe.REVIVED_DATETIME)
-    )
+    where (oe.shutdown_typename = 'FORCED') and 
+    (oe.REVIVED_DATETIME IS NULL) and
+    (oe.OUTAGE_DATETIME < :1) and
+    (months_between(oe.OUTAGE_DATETIME,:1) > 0.01)
     '''
 
     # get cursor and execute fetch sql
     cur = con.cursor()
-    cur.execute(outagesFetchSql, (startDt, endDt))
+    cur.execute(outagesFetchSql, (endDt,))
     colNames = [row[0] for row in cur.description]
     targetColumns = ['ELEMENT_NAME', 'OWNERS', 'CAPACITY',
                      'OUTAGE_DATETIME', 'REVIVED_DATETIME', 'OUTAGE_REMARKS', 'REASON', 'SHUTDOWN_TAG']

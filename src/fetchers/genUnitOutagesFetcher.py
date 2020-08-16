@@ -31,7 +31,7 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
     where (oe.entity_name = 'GENERATING_UNIT') and 
     (
         (oe.OUTAGE_DATETIME between :1 and :2) 
-        or ((oe.OUTAGE_DATETIME < :2) and (oe.REVIVED_DATETIME = NULL))
+        or ((oe.OUTAGE_DATETIME < :2) and (oe.REVIVED_DATETIME IS NULL))
         or (:1 between oe.OUTAGE_DATETIME and oe.REVIVED_DATETIME)
     )
     '''
