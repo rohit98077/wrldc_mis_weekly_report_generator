@@ -6,6 +6,7 @@ from src.typeDefs.outage import IOutage
 
 def fetchlongTimeUnrevivedForcedOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -> List[IOutage]:
     """fetch forced outages that are still out and outage duration greater than 6 months
+    here we take (revived time = null) or (revived time > endTimeInput)
 
     Args:
         conStr (str): connection string to reports database
@@ -26,9 +27,9 @@ def fetchlongTimeUnrevivedForcedOutages(conStr: str, startDt: dt.datetime, endDt
     oe.OUTAGE_REMARKS, oe.REASON, oe.shutdown_tag
     from mis_warehouse.outage_events oe 
     where (oe.shutdown_typename = 'FORCED') and 
-    (oe.REVIVED_DATETIME IS NULL) and
     (oe.OUTAGE_DATETIME < :1) and
-    (months_between(oe.OUTAGE_DATETIME,:1) > 0.01)
+    ((oe.REVIVED_DATETIME IS NULL) or (oe.REVIVED_DATETIME>:1)) and
+    (months_between(oe.OUTAGE_DATETIME,:1) > 6)
     '''
 
     # get cursor and execute fetch sql
