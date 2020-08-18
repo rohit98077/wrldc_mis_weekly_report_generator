@@ -6,6 +6,8 @@ from src.fetchers.genUnitOutagesFetcher import fetchMajorGenUnitOutages
 from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.fetchers.longTimeUnrevivedForcedOutagesFetcher import fetchlongTimeUnrevivedForcedOutages
 from src.fetchers.freqProfileFetcher import FrequencyProfileFetcher
+from src.fetchers.vdiFetcher import VdiFetcher
+from src.typeDefs.stationwiseVdiData import IStationwiseVdi
 from src.typeDefs.outage import IOutage
 from src.typeDefs.appConfig import IAppConfig
 from src.typeDefs.reportContext import IReportCxt
@@ -60,8 +62,13 @@ reportContext['longTimeOtgs'] = fetchlongTimeUnrevivedForcedOutages(
 freqProfFetcher = FrequencyProfileFetcher(appDbConStr)
 freqProfile = freqProfFetcher.fetchDerivedFrequency(startDate, endDate)
 reportContext['freqProfRows'] = freqProfile['freqProfRows']
-reportContext['weeklyFdi'] = freqProfile['weeklyFdi']
+reportContext['weeklyFdi'] = round(freqProfile['weeklyFdi'], 3)
 
+# get stationwise vdi data
+vdiFetcher = VdiFetcher(appDbConStr)
+vdiData: IStationwiseVdi = vdiFetcher.fetchWeeklyVDI(startDate)
+reportContext['vdi400Rows'] = vdiData['vdi400Rows']
+reportContext['vdi765Rows'] = vdiData['vdi765Rows']
 
 # generate report word file
 tmplPath = "assets/weekly_report_template.docx"
