@@ -5,6 +5,7 @@ from src.config.appConfig import getConfig
 from src.fetchers.genUnitOutagesFetcher import fetchMajorGenUnitOutages
 from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.fetchers.longTimeUnrevivedForcedOutagesFetcher import fetchlongTimeUnrevivedForcedOutages
+from src.fetchers.freqProfileFetcher import FrequencyProfileFetcher
 from src.typeDefs.outage import IOutage
 from src.typeDefs.appConfig import IAppConfig
 from src.typeDefs.reportContext import IReportCxt
@@ -38,7 +39,9 @@ appDbConStr: str = appConfig['appDbConStr']
 reportContext: IReportCxt = {
     'genOtgs': [],
     'transOtgs': [],
-    'longTimeOtgs': []
+    'longTimeOtgs': [],
+    'freqProfRows': [],
+    'weeklyFdi': -1
 }
 
 # get major generating unit outages
@@ -53,7 +56,14 @@ reportContext['transOtgs'] = fetchTransElOutages(
 reportContext['longTimeOtgs'] = fetchlongTimeUnrevivedForcedOutages(
     appDbConStr, startDate, endDate)
 
-## generate report word file
+# get freq profile data
+freqProfFetcher = FrequencyProfileFetcher(appDbConStr)
+freqProfile = freqProfFetcher.fetchDerivedFrequency(startDate, endDate)
+reportContext['freqProfRows'] = freqProfile['freqProfRows']
+reportContext['weeklyFdi'] = freqProfile['weeklyFdi']
+
+
+# generate report word file
 tmplPath = "assets/weekly_report_template.docx"
 doc = DocxTemplate(tmplPath)
 

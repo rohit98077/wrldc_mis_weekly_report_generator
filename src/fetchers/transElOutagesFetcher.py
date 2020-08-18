@@ -31,7 +31,8 @@ def fetchTransElOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -
     (
         (oe.OUTAGE_DATETIME between :1 and :2) 
         or (oe.REVIVED_DATETIME between :1 and :2)
-    )
+    ) 
+    order by oe.OUTAGE_DATETIME
     '''
 
     # get cursor and execute fetch sql
