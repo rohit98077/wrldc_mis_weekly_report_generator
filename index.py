@@ -7,8 +7,10 @@ from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.fetchers.longTimeUnrevivedForcedOutagesFetcher import fetchlongTimeUnrevivedForcedOutages
 from src.fetchers.freqProfileFetcher import FrequencyProfileFetcher
 from src.fetchers.vdiFetcher import VdiFetcher
+from src.fetchers.iegcViolMsgsFetcher import IegcViolMsgsFetcher
 from src.typeDefs.stationwiseVdiData import IStationwiseVdi
 from src.typeDefs.outage import IOutage
+from src.typeDefs.iegcViolMsg import IIegcViolMsg
 from src.typeDefs.appConfig import IAppConfig
 from src.typeDefs.reportContext import IReportCxt
 from typing import List
@@ -69,6 +71,12 @@ vdiFetcher = VdiFetcher(appDbConStr)
 vdiData: IStationwiseVdi = vdiFetcher.fetchWeeklyVDI(startDate)
 reportContext['vdi400Rows'] = vdiData['vdi400Rows']
 reportContext['vdi765Rows'] = vdiData['vdi765Rows']
+
+# get iegc violaion messages
+violMsgsFetcher = IegcViolMsgsFetcher(appDbConStr)
+violMsgs: List[IIegcViolMsg] = violMsgsFetcher.fetchIegcViolMsgs(
+    startDate, endDate)
+reportContext['violMsgs'] = violMsgs
 
 # generate report word file
 tmplPath = "assets/weekly_report_template.docx"

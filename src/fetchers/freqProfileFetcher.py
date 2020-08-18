@@ -26,14 +26,17 @@ class FrequencyProfileFetcher():
             IFreqProfile: frequency profile data
         """
 
-        del df['ID']
-        df['DATE_KEY'] = df['DATE_KEY'].dt.day
-
         # initialise frequency profile data
         derFrequencyDict: IFreqProfile = {
             'freqProfRows': [],
             'weeklyFdi': -1
         }
+
+        if df.shape[0] == 0:
+            return derFrequencyDict
+
+        del df['ID']
+        df['DATE_KEY'] = df['DATE_KEY'].dt.day
 
         derFreqRows = []
         weeklyFDI = (df['OUT_OF_BAND_INHRS'].sum())/168
