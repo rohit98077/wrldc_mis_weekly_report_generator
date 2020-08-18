@@ -2,6 +2,7 @@ config.xlsx
 __pycache__
 *.py[cod]
 *$py.class
+dumps/
 
 # Distribution / packaging 
 .Python build/ 
@@ -102,6 +103,6 @@ GitHub.sublime-settings
 .vscode/* 
 !.vscode/settings.json 
 !.vscode/tasks.json 
-!.vscode/launch.json 
+# !.vscode/launch.json 
 !.vscode/extensions.json 
 .history

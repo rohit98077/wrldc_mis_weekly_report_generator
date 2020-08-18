@@ -6,9 +6,8 @@ from src.typeDefs.outage import IOutage
 
 def fetchTransElOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -> List[IOutage]:
     """fetch transmission element outages for a start and end dates, where
-    start time between outage time and revive time
     outage time between start and end time
-    outage time < end time but not revived (revived time = null)
+    revived time between start and end time
 
     Args:
         conStr (str): connection string to reports database
@@ -31,8 +30,7 @@ def fetchTransElOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -
     where not(oe.entity_name = 'GENERATING_UNIT') and 
     (
         (oe.OUTAGE_DATETIME between :1 and :2) 
-        or ((oe.OUTAGE_DATETIME < :2) and (oe.REVIVED_DATETIME IS NULL))
-        or (:1 between oe.OUTAGE_DATETIME and oe.REVIVED_DATETIME)
+        or (oe.REVIVED_DATETIME between :1 and :2)
     )
     '''
 
