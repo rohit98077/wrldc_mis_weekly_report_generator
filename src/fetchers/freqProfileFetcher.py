@@ -79,7 +79,8 @@ class FrequencyProfileFetcher():
                 cur = connection.cursor()
                 fetch_sql = '''select *
                             from mis_warehouse.derived_frequency
-                            where date_key between to_date(:start_date) and to_date(:end_date)'''
+                            where date_key between to_date(:start_date) and to_date(:end_date) 
+                            order by date_key'''
 
                 cur.execute(
                     "ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD ' ")
