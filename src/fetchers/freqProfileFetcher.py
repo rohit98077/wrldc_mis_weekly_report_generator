@@ -95,6 +95,6 @@ class FrequencyProfileFetcher():
         finally:
             cur.close()
             connection.close()
-            print("db connection closed")
+            print("db connection closed after freq profile data fetch for weekly report")
         derivedFrequencyDict = self.toContextDict(df)
         return derivedFrequencyDict

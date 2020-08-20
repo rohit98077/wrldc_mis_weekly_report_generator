@@ -7,10 +7,12 @@ from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.fetchers.longTimeUnrevivedForcedOutagesFetcher import fetchlongTimeUnrevivedForcedOutages
 from src.fetchers.freqProfileFetcher import FrequencyProfileFetcher
 from src.fetchers.vdiFetcher import VdiFetcher
+from src.fetchers.angleViolFetcher import AnglViolationsFetcher
 from src.fetchers.iegcViolMsgsFetcher import IegcViolMsgsFetcher
 from src.typeDefs.stationwiseVdiData import IStationwiseVdi
 from src.typeDefs.outage import IOutage
 from src.typeDefs.iegcViolMsg import IIegcViolMsg
+from src.typeDefs.angleViolSummary import IAngleViolSummary
 from src.typeDefs.appConfig import IAppConfig
 from src.typeDefs.reportContext import IReportCxt
 from typing import List
@@ -33,6 +35,7 @@ args = parser.parse_args()
 # access each command line input from the dictionary
 startDate = dt.datetime.strptime(args.start_date, '%Y-%m-%d')
 endDate = dt.datetime.strptime(args.end_date, '%Y-%m-%d')
+endDate = endDate.replace(hour=23, minute=59, second=59)
 
 # get app db connection string from config file
 appConfig: IAppConfig = getConfig()
@@ -45,7 +48,9 @@ reportContext: IReportCxt = {
     'transOtgs': [],
     'longTimeOtgs': [],
     'freqProfRows': [],
-    'weeklyFdi': -1
+    'weeklyFdi': -1,
+    'wideViols': [],
+    'adjViols': []
 }
 
 # get major generating unit outages
@@ -77,6 +82,13 @@ violMsgsFetcher = IegcViolMsgsFetcher(appDbConStr)
 violMsgs: List[IIegcViolMsg] = violMsgsFetcher.fetchIegcViolMsgs(
     startDate, endDate)
 reportContext['violMsgs'] = violMsgs
+
+# get pairs angle violations
+anglViolsFetcher = AnglViolationsFetcher(appDbConStr)
+pairAnglViolations: IAngleViolSummary = anglViolsFetcher.fetchPairsAnglViolations(
+    startDate, endDate)
+reportContext['wideViols'] = pairAnglViolations['wideAnglViols']
+reportContext['adjViols'] = pairAnglViolations['adjAnglViols']
 
 # generate report word file
 tmplPath = "assets/weekly_report_template.docx"

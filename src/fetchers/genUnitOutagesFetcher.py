@@ -31,8 +31,10 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
     (
         (oe.OUTAGE_DATETIME between :1 and :2) 
         or (oe.REVIVED_DATETIME between :1 and :2) 
+        or (oe.OUTAGE_DATETIME <= :1 and oe.REVIVED_DATETIME >= :2)
+        or (oe.OUTAGE_DATETIME <= :1 and oe.REVIVED_DATETIME IS NULL)
     ) 
-    order by oe.OUTAGE_DATETIME
+    order by oe.OUTAGE_DATETIME desc
     '''
 
     # get cursor and execute fetch sql

@@ -93,7 +93,7 @@ class VdiFetcher():
                 cur = connection.cursor()
                 fetch_sql = '''select vdi.* from 
                             mis_warehouse.derived_vdi vdi, mis_warehouse.voltage_mapping_table mt
-                            where vdi.mapping_id = mt.id and mt.is_included_in_weekly = 'T' and week_start_date = to_date(:start_date)'''
+                            where vdi.mapping_id = mt.id and mt.is_included_in_weekly_vdi = 'T' and week_start_date = to_date(:start_date)'''
 
                 cur.execute(
                     "ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD' ")
@@ -102,13 +102,14 @@ class VdiFetcher():
 
             except Exception as err:
                 print('error while fetching weekly VDI data', err)
+                return {'vdi400Rows': [], 'vdi765Rows': []}
             else:
                 print('VDI data fetch complete')
                 connection.commit()
         finally:
             cur.close()
             connection.close()
-            print("connection closed")
+            print("db connection closed after weekly vdi fetch")
 
         derivedVDIDict = self.toDerivedVDIDict(df)
         return derivedVDIDict
