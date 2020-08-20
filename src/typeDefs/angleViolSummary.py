@@ -3,5 +3,5 @@ from src.typeDefs.angleViolation import IAngleViolation
 
 
 class IAngleViolSummary(TypedDict):
-    wideAnglViolations: List[IAngleViolation]
-    adjAnglViolations: List[IAngleViolation]
+    wideAnglViols: List[IAngleViolation]
+    adjAnglViols: List[IAngleViolation]

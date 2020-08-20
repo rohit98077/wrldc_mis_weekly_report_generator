@@ -4,6 +4,6 @@ from typing import TypedDict
 class IAngleViolation(TypedDict):
     pairName: str
     angularLim: float
-    violation: str
+    violPerc: str
     maxDeg: str
     minDeg: str
