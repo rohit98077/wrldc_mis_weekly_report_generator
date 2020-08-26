@@ -7,6 +7,7 @@ from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.fetchers.longTimeUnrevivedForcedOutagesFetcher import fetchlongTimeUnrevivedForcedOutages
 from src.fetchers.freqProfileFetcher import FrequencyProfileFetcher
 from src.fetchers.vdiFetcher import VdiFetcher
+from src.fetchers.voltStatsFetcher import VoltStatsFetcher
 from src.fetchers.angleViolFetcher import AnglViolationsFetcher
 from src.fetchers.iegcViolMsgsFetcher import IegcViolMsgsFetcher
 from src.typeDefs.stationwiseVdiData import IStationwiseVdi
@@ -50,7 +51,13 @@ reportContext: IReportCxt = {
     'freqProfRows': [],
     'weeklyFdi': -1,
     'wideViols': [],
-    'adjViols': []
+    'adjViols': [],
+    'voltStats': {
+        'table1': [],
+        'table2': [],
+        'table3': [],
+        'table4': []
+    }
 }
 
 # get major generating unit outages
@@ -77,7 +84,12 @@ vdiData: IStationwiseVdi = vdiFetcher.fetchWeeklyVDI(startDate)
 reportContext['vdi400Rows'] = vdiData['vdi400Rows']
 reportContext['vdi765Rows'] = vdiData['vdi765Rows']
 
-# get iegc violaion messages
+# get stationwise voltage stats
+voltStatsFetcher = VoltStatsFetcher(appDbConStr)
+voltStats: dict = voltStatsFetcher.fetchDerivedVoltage(startDate, endDate)
+reportContext['voltStats'] = voltStats
+
+# get iegc violation messages
 violMsgsFetcher = IegcViolMsgsFetcher(appDbConStr)
 violMsgs: List[IIegcViolMsg] = violMsgsFetcher.fetchIegcViolMsgs(
     startDate, endDate)

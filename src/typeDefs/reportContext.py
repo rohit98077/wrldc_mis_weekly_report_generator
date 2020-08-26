@@ -5,6 +5,13 @@ from src.typeDefs.stationVdiProfile import IStationVdiProfile
 from src.typeDefs.iegcViolMsg import IIegcViolMsg
 
 
+class VoltageStatsDict(TypedDict):
+    table1: List[dict]
+    table2: List[dict]
+    table3: List[dict]
+    table4: List[dict]
+
+
 class IReportCxt(TypedDict):
     genOtgs: List[IOutage]
     transOtgs: List[IOutage]
@@ -14,3 +21,4 @@ class IReportCxt(TypedDict):
     vdi400Rows: List[IStationVdiProfile]
     vdi765Rows: List[IStationVdiProfile]
     violMsgs: List[IIegcViolMsg]
+    voltStats: VoltageStatsDict
