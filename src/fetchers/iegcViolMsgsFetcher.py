@@ -30,7 +30,7 @@ class IegcViolMsgsFetcher():
             connection = cx_Oracle.connect(self.connString)
             cursor = connection.cursor()
 
-            sql_fetch = """ SELECT * FROM mis_warehouse.IEGC_VIOLATION_DATA 
+            sql_fetch = """ SELECT * FROM mis_warehouse.IEGC_VIOLATION_MESSAGE_DATA 
                         where (date_time BETWEEN TO_DATE(:col1, 'YYYY-MM-DD') and TO_DATE(:col2, 'YYYY-MM-DD'))
                         and not(entity='nan') 
                         order by date_time
@@ -54,9 +54,9 @@ class IegcViolMsgsFetcher():
                 'msgId': df['MESSAGE'][i],
                 'date': dt.datetime.strftime(df['DATE_TIME'][i], "%d-%m-%Y"),
                 'entity': df['ENTITY'][i],
-                'schedule': df['SCHEDULE'][i],
-                'drawal': df['DRAWAL'][i],
-                'deviation': df['DEVIATION'][i]
+                'schedule': int(round(df['SCHEDULE'][i])),
+                'drawal': int(round(df['DRAWAL'][i])),
+                'deviation': int(round(df['DEVIATION'][i]))
             }
             violMsgList.append(violMsg)
         return violMsgList
