@@ -2,6 +2,7 @@ import argparse
 import datetime as dt
 from docxtpl import DocxTemplate, InlineImage
 from src.config.appConfig import getConfig
+from src.utils.timeUtils import getWeekNumOfFinYr, getFinYearForDt
 from src.fetchers.genUnitOutagesFetcher import fetchMajorGenUnitOutages
 from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.fetchers.longTimeUnrevivedForcedOutagesFetcher import fetchlongTimeUnrevivedForcedOutages
@@ -20,7 +21,7 @@ from typing import List
 
 # get start and end dates from command line
 # initialise default command line input values
-startDate = dt.datetime.now()
+startDate = dt.datetime.now() - dt.timedelta(days=1)
 endDate = startDate - dt.timedelta(days=8)
 
 # get an instance of argument parser from argparse module
@@ -38,6 +39,12 @@ startDate = dt.datetime.strptime(args.start_date, '%Y-%m-%d')
 endDate = dt.datetime.strptime(args.end_date, '%Y-%m-%d')
 endDate = endDate.replace(hour=23, minute=59, second=59)
 
+startDateReportString = dt.datetime.strftime(startDate, '%d-%b-%Y')
+endDateReportString = dt.datetime.strftime(endDate, '%d-%b-%Y')
+weekNum = getWeekNumOfFinYr(startDate)
+finYr = getFinYearForDt(startDate)
+finYrStr = '{0}-{1}'.format(finYr, (finYr+1) % 100)
+
 # get app db connection string from config file
 appConfig: IAppConfig = getConfig()
 appDbConStr: str = appConfig['appDbConStr']
@@ -45,6 +52,10 @@ appDbConStr: str = appConfig['appDbConStr']
 # create context for weekly reoport
 # initialise report context
 reportContext: IReportCxt = {
+    'startDt': startDateReportString,
+    'endDt': endDateReportString,
+    'wkNum': weekNum,
+    'finYr': finYrStr,
     'genOtgs': [],
     'transOtgs': [],
     'longTimeOtgs': [],

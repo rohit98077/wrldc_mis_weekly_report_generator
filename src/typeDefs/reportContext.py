@@ -13,6 +13,10 @@ class VoltageStatsDict(TypedDict):
 
 
 class IReportCxt(TypedDict):
+    startDt: str
+    endDt: str
+    wkNum: float
+    finYr: str
     genOtgs: List[IOutage]
     transOtgs: List[IOutage]
     longTimeOtgs: List[IOutage]
