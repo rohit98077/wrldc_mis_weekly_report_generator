@@ -3,6 +3,10 @@ from src.typeDefs.outage import IOutage
 from src.typeDefs.dayFreqProfile import IDayFreqProfile
 from src.typeDefs.stationVdiProfile import IStationVdiProfile
 from src.typeDefs.iegcViolMsg import IIegcViolMsg
+from src.typeDefs.ictConstraint import IIctConstraint
+from src.typeDefs.transConstraint import ITransConstraint
+from src.typeDefs.lvNodesInfo import ILvNodesInfo
+from src.typeDefs.hvNodesInfo import IHvNodesInfo
 
 
 class VoltageStatsDict(TypedDict):
@@ -26,3 +30,7 @@ class IReportCxt(TypedDict):
     vdi765Rows: List[IStationVdiProfile]
     violMsgs: List[IIegcViolMsg]
     voltStats: VoltageStatsDict
+    ictCons: List[IIctConstraint]
+    transCons: List[ITransConstraint]
+    hvNodes: List[IHvNodesInfo]
+    lvNodes: List[ILvNodesInfo]

@@ -11,10 +11,18 @@ from src.fetchers.vdiFetcher import VdiFetcher
 from src.fetchers.voltStatsFetcher import VoltStatsFetcher
 from src.fetchers.angleViolFetcher import AnglViolationsFetcher
 from src.fetchers.iegcViolMsgsFetcher import IegcViolMsgsFetcher
+from src.fetchers.ictConstraintsFetcher import IctConstraintsFetcher
+from src.fetchers.transmissionConstraintsFetcher import TransConstraintsFetcher
+from src.fetchers.hvNodesInfoFetcher import HvNodesInfoFetcher
+from src.fetchers.lvNodesInfoFetcher import LvNodesInfoFetcher
 from src.typeDefs.stationwiseVdiData import IStationwiseVdi
 from src.typeDefs.outage import IOutage
 from src.typeDefs.iegcViolMsg import IIegcViolMsg
 from src.typeDefs.angleViolSummary import IAngleViolSummary
+from src.typeDefs.ictConstraint import IIctConstraint
+from src.typeDefs.transConstraint import ITransConstraint
+from src.typeDefs.hvNodesInfo import IHvNodesInfo
+from src.typeDefs.lvNodesInfo import ILvNodesInfo
 from src.typeDefs.appConfig import IAppConfig
 from src.typeDefs.reportContext import IReportCxt
 from typing import List
@@ -68,7 +76,11 @@ reportContext: IReportCxt = {
         'table2': [],
         'table3': [],
         'table4': []
-    }
+    },
+    'ictCons': [],
+    'transCons': [],
+    'lvNodes': [],
+    'hvNodes': []
 }
 
 # get major generating unit outages
@@ -112,6 +124,30 @@ pairAnglViolations: IAngleViolSummary = anglViolsFetcher.fetchPairsAnglViolation
     startDate, endDate)
 reportContext['wideViols'] = pairAnglViolations['wideAnglViols']
 reportContext['adjViols'] = pairAnglViolations['adjAnglViols']
+
+# get ict constraints
+ictConsFetcher = IctConstraintsFetcher(appDbConStr)
+ictConsList: List[IIctConstraint] = ictConsFetcher.fetchIctConstraints(
+    startDate, endDate)
+reportContext['ictCons'] = ictConsList
+
+# get transmission constraints
+transConsFetcher = TransConstraintsFetcher(appDbConStr)
+transConsList: List[ITransConstraint] = transConsFetcher.fetchTransConstraints(
+    startDate, endDate)
+reportContext['transCons'] = transConsList
+
+# get HV Nodes Info
+hvNodesFetcher = HvNodesInfoFetcher(appDbConStr)
+hvNodesInfoList: List[IHvNodesInfo] = hvNodesFetcher.fetchHvNodesInfo(
+    startDate, endDate)
+reportContext['hvNodes'] = hvNodesInfoList
+
+# get LV Nodes Info
+lvNodesFetcher = LvNodesInfoFetcher(appDbConStr)
+lvNodesInfoList: List[ILvNodesInfo] = lvNodesFetcher.fetchLvNodesInfo(
+    startDate, endDate)
+reportContext['lvNodes'] = lvNodesInfoList
 
 # generate report word file
 tmplPath = "assets/weekly_report_template.docx"
