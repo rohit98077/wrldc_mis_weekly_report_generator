@@ -1,8 +1,10 @@
 import argparse
 import datetime as dt
+import os
+from docx2pdf import convert
 from docxtpl import DocxTemplate, InlineImage
 from src.config.appConfig import getConfig
-from src.utils.timeUtils import getWeekNumOfFinYr, getFinYearForDt
+from src.utils.timeUtils import getWeekNumOfFinYr, getFinYearForDt, getMondayBeforeDt
 from src.fetchers.genUnitOutagesFetcher import fetchMajorGenUnitOutages
 from src.fetchers.transElOutagesFetcher import fetchTransElOutages
 from src.fetchers.longTimeUnrevivedForcedOutagesFetcher import fetchlongTimeUnrevivedForcedOutages
@@ -29,8 +31,9 @@ from typing import List
 
 # get start and end dates from command line
 # initialise default command line input values
-startDate = dt.datetime.now() - dt.timedelta(days=1)
-endDate = startDate - dt.timedelta(days=8)
+startDate = dt.datetime.now() - dt.timedelta(days=7)
+startDate = getMondayBeforeDt(startDate)
+endDate = startDate + dt.timedelta(days=6)
 
 # get an instance of argument parser from argparse module
 parser = argparse.ArgumentParser()
@@ -159,5 +162,12 @@ doc = DocxTemplate(tmplPath)
 # reportContext['signature'] = signImg
 
 doc.render(reportContext)
-doc.save("dumps/weekly_report.docx")
-print('Weekly report generation done...')
+dumpFileName = 'Weekly_no_{0}_{1}_to_{2}.docx'.format(weekNum, dt.datetime.strftime(
+    startDate, '%d-%m-%Y'), dt.datetime.strftime(endDate, '%d-%m-%Y'))
+dumpFileFullPath = os.path.join(appConfig['dumpFolder'], dumpFileName)
+doc.save(dumpFileFullPath)
+print('Weekly report word file generation done...')
+
+# convert report to pdf
+convert(dumpFileFullPath, dumpFileFullPath.replace('.docx', '.pdf'))
+print('Weekly report pdf generation done...')

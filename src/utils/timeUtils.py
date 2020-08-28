@@ -15,15 +15,11 @@ def getWeekNumOfFinYr(inpDt: dt.datetime) -> int:
     """
 
     # get first Monday before 1st Apr of this year
-    finStartMonday = dt.datetime(inpDt.year, 4, 1)
-    while not dt.datetime.strftime(finStartMonday, '%w') == '1':
-        finStartMonday = finStartMonday - dt.timedelta(days=1)
+    finStartMonday = getMondayBeforeDt(dt.datetime(inpDt.year, 4, 1))
 
     # get first Monday before inpDt
-    inpMonday = inpDt
-    while not dt.datetime.strftime(inpMonday, '%w') == '1':
-        inpMonday = inpMonday - dt.timedelta(days=1)
-
+    inpMonday = getMondayBeforeDt(inpDt)
+    
     # get week number
     weekNum = 1 + ((inpMonday-finStartMonday).days/7)
     return int(weekNum)
@@ -43,9 +39,7 @@ def getFinYearForDt(inpDt: dt.datetime) -> int:
         int: financial year
     """
     # get first Monday before inpDt
-    inpMonday = inpDt
-    while not dt.datetime.strftime(inpMonday, '%w') == '1':
-        inpMonday = inpMonday - dt.timedelta(days=1)
+    inpMonday = getMondayBeforeDt(inpDt)
 
     # inpSun = inpMonday+6
     inpSun = inpMonday+dt.timedelta(days=6)
@@ -54,3 +48,19 @@ def getFinYearForDt(inpDt: dt.datetime) -> int:
     if inpSun.month < 4:
         finYr = inpSun.year - 1
     return finYr
+
+
+def getMondayBeforeDt(inpDt: dt.datetime) -> dt.datetime:
+    """ gets the first Monday before a specified date
+
+    Args:
+        inpDt (dt.datetime): input date
+
+    Returns:
+        dt.datetime: first monday before input date
+    """
+    # get first Monday before inpDt
+    inpMonday = inpDt
+    while not dt.datetime.strftime(inpMonday, '%w') == '1':
+        inpMonday = inpMonday - dt.timedelta(days=1)
+    return inpMonday
