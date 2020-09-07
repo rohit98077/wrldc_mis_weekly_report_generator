@@ -4,6 +4,7 @@ __pycache__
 *$py.class
 dumps/
 project_env/
+~*.docx
 
 # Distribution / packaging 
 .Python build/ 

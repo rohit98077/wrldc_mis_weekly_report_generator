@@ -75,10 +75,10 @@ class AnglViolationsFetcher():
         for i in wideAnglDf.index:
             pairViol: IAngleViolation = {
                 'pairName': wideAnglDf['ANGLE_PAIR'][i],
-                'angularLim': wideAnglDf['ANG_LIM'][i],
-                'violPerc': wideAnglDf['VIOL_PERC'][i],
-                'maxDeg': wideAnglDf['MAX_VIOL'][i],
-                'minDeg': wideAnglDf['MIN_VIOL'][i],
+                'angularLim': round(wideAnglDf['ANG_LIM'][i], 2),
+                'violPerc': round(wideAnglDf['VIOL_PERC'][i], 2),
+                'maxDeg': round(wideAnglDf['MAX_VIOL'][i], 2),
+                'minDeg': round(wideAnglDf['MIN_VIOL'][i], 2),
             }
             wideAnglViols.append(pairViol)
 
@@ -86,10 +86,10 @@ class AnglViolationsFetcher():
         for i in adjAnglDf.index:
             pairViol = {
                 'pairName': adjAnglDf['ANGLE_PAIR'][i],
-                'angularLim': adjAnglDf['ANG_LIM'][i],
-                'violPerc': adjAnglDf['VIOL_PERC'][i],
-                'maxDeg': adjAnglDf['MAX_VIOL'][i],
-                'minDeg': adjAnglDf['MIN_VIOL'][i],
+                'angularLim': round(adjAnglDf['ANG_LIM'][i], 2),
+                'violPerc': round(adjAnglDf['VIOL_PERC'][i], 2),
+                'maxDeg': round(adjAnglDf['MAX_VIOL'][i], 2),
+                'minDeg': round(adjAnglDf['MIN_VIOL'][i], 2),
             }
             adjAngViols.append(pairViol)
 
