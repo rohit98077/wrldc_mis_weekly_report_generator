@@ -8,6 +8,8 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
     """fetch major generating unit outages for a start and end dates, where
     outage time between start and end time
     revived time between start and end time
+    installed capapcity >= 100 MW
+    outage time >= 72 hrs
 
     Args:
         conStr (str): connection string to reports database
@@ -34,7 +36,7 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
         or (oe.OUTAGE_DATETIME <= :1 and oe.REVIVED_DATETIME >= :2)
         or (oe.OUTAGE_DATETIME <= :1 and oe.REVIVED_DATETIME IS NULL)
     ) 
-    order by oe.OUTAGE_DATETIME desc
+    order by oe.OWNERS asc, oe.OUTAGE_DATETIME desc
     '''
 
     # get cursor and execute fetch sql
@@ -68,12 +70,26 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
         unitName: str = row[unitNameInd]
         owners: str = row[ownersInd]
         cap: str = str(row[capInd])
-        outDateStr: str = dt.datetime.strftime(row[outDtInd], "%d-%m-%Y")
-        outTimeStr: str = dt.datetime.strftime(row[outDtInd], "%H:%M")
+        # skip row processing if capacity < 100
+        try:
+            capVal = float(cap)
+            if capVal < 100:
+                continue
+        except:
+            continue
+        outageDt = row[outDtInd]
+        outDateStr: str = dt.datetime.strftime(outageDt, "%d-%m-%Y")
+        outTimeStr: str = dt.datetime.strftime(outageDt, "%H:%M")
         revivalDateStr: str = 'Still out'
         revivalTimeStr: str = 'Still out'
         revivalDt = row[reviveDtInd]
         if not(revivalDt == None):
+            # skip row processing if total outage time < 72 hours
+            try:
+                if (revivalDt - outageDt) < dt.timedelta(hours=72):
+                    continue
+            except:
+                continue
             revivalDateStr = dt.datetime.strftime(revivalDt, "%d-%m-%Y")
             revivalTimeStr = dt.datetime.strftime(revivalDt, "%H:%M")
         reason = row[reasonInd]
