@@ -34,7 +34,7 @@ class TransConstraintsFetcher():
                         select * from transmission_constraint_data
                         where 
                         start_date IN 
-                        select max(start_date) from transmission_constraint_data
+                        (select max(start_date) from transmission_constraint_data)
                         """
             cursor.execute("ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD' ")
             df = pd.read_sql(sql_fetch, con=connection)
