@@ -33,7 +33,7 @@ class LvNodesInfoFetcher():
             sql_fetch = """
                         select * from nodes_low_voltage_data \
                         where start_date IN 
-                        (select start_date as s from nodes_low_voltage_data where rownum<2)
+                        (select max(start_date) as s from nodes_low_voltage_data)
                         """
             cursor.execute("ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD' ")
             df = pd.read_sql(sql_fetch, con=connection)

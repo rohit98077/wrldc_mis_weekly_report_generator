@@ -33,7 +33,7 @@ class IctConstraintsFetcher():
             sql_fetch = """
                         select * from ict_constraint_data 
                         where 
-                        start_date IN (select start_date as s from ict_constraint_data where rownum<2)
+                        start_date IN (select max(start_date) as s from ict_constraint_data)
                         """
             cursor.execute("ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD' ")
             df = pd.read_sql(sql_fetch, con=connection)
