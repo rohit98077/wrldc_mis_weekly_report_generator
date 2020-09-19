@@ -110,6 +110,7 @@ class VdiFetcher():
             cur.close()
             connection.close()
             print("db connection closed after weekly vdi fetch")
-
+        df['MAXIMUM'] = df['MAXIMUM'].round().astype(int)
+        df['MINIMUM'] = df['MINIMUM'].round().astype(int)
         derivedVDIDict = self.toDerivedVDIDict(df)
         return derivedVDIDict

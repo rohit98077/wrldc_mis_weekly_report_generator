@@ -105,6 +105,8 @@ class VoltStatsFetcher():
                                    True, True], inplace=True, ignore_index=True)
 
                     # passing object to appendTables method.
+                    df['MAXIMUM'] = df['MAXIMUM'].round().astype(int)
+                    df['MINIMUM'] = df['MINIMUM'].round().astype(int)
                     self.appendTables(df)
 
             except Exception as err:
