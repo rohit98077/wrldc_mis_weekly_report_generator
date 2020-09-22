@@ -75,6 +75,7 @@ def fetchMajorGenUnitOutages(conStr: str, startDt: dt.datetime, endDt: dt.dateti
             capVal = float(cap)
             if capVal < 100:
                 continue
+            cap = str(round(capVal))
         except:
             continue
         outageDt = row[outDtInd]
