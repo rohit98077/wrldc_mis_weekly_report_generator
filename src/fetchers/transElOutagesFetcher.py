@@ -22,7 +22,7 @@ def fetchTransElOutages(conStr: str, startDt: dt.datetime, endDt: dt.datetime) -
     con = cx_Oracle.connect(conStr)
 
     # sql query to fetch the outages
-    outagesFetchSql = '''select oe.ELEMENT_NAME, 
+    outagesFetchSql = '''SELECT oe.ELEMENT_NAME, 
     oe.OWNERS, oe.CAPACITY,
     oe.OUTAGE_DATETIME, oe.REVIVED_DATETIME,
     oe.OUTAGE_REMARKS, oe.REASON, oe.shutdown_tag
